@@ -24,11 +24,17 @@
 
 ## 🤝 Supported LLM Providers
 
+### Paid Providers
 - 🟢 **OpenAI** - GPT-4o, GPT-4 Turbo, GPT-4, GPT-3.5 Turbo
 - 🟣 **Anthropic** - Claude 3 Opus, Claude 3 Sonnet, Claude 3 Haiku, Claude 2.1
 - 🔵 **Google** - Gemini 1.5 Pro, Gemini 1.5 Flash, Gemini 1.0 Pro
 - 🟠 **Mistral AI** - Mistral Large, Mistral Medium, Mistral Small, Open Mistral 7B
 - 🟡 **Cohere** - Command R+, Command R, Command Light
+
+### Free Providers
+- 🌈 **OpenRouter** - Free access to GPT-3.5 Turbo, Claude Instant, PaLM 2, Llama 2, and Mistral 7B
+- 🤝 **Together AI** - Free access to Llama 2, Mistral 7B, Nous Hermes, RedPajama, and Dolly v2
+- 🤖 **Grok** - Free access to Grok-1 and Grok-1 Mini (with X Premium subscription)
 
 ## 🛠️ Prerequisites
 

@@ -3,13 +3,20 @@
 This guide provides detailed instructions on how to obtain API keys for each supported LLM provider and how to add them to the Multi-LLM Platform.
 
 ## Table of Contents
-- [OpenAI](#openai)
-- [Anthropic](#anthropic)
-- [Google AI (Gemini)](#google-ai-gemini)
-- [Mistral AI](#mistral-ai)
-- [Cohere](#cohere)
+- [Paid Providers](#paid-providers)
+  - [OpenAI](#openai)
+  - [Anthropic](#anthropic)
+  - [Google AI (Gemini)](#google-ai-gemini)
+  - [Mistral AI](#mistral-ai)
+  - [Cohere](#cohere)
+- [Free Providers](#free-providers)
+  - [OpenRouter](#openrouter)
+  - [Together AI](#together-ai)
+  - [Grok](#grok)
 - [Adding API Keys to the Platform](#adding-api-keys-to-the-platform)
 - [API Key Security](#api-key-security)
+
+## Paid Providers
 
 ## OpenAI
 
@@ -90,6 +97,56 @@ For the most up-to-date pricing, visit [Mistral AI Pricing](https://mistral.ai/p
 - Command R: $1/1M input tokens, $3/1M output tokens
 
 For the most up-to-date pricing, visit [Cohere Pricing](https://cohere.com/pricing).
+
+## Free Providers
+
+## OpenRouter
+
+### Getting an OpenRouter API Key
+1. Visit [OpenRouter](https://openrouter.ai/)
+2. Sign up or log in to your account
+3. Go to the API Keys section
+4. Create a new API key
+5. Copy the API key
+
+### Free Tier
+OpenRouter offers a generous free tier that includes:
+- Access to multiple LLMs through a unified API
+- Free credits that refresh monthly
+- Free models include GPT-3.5 Turbo, Claude Instant, PaLM 2, Llama 2, and Mistral 7B
+
+For the most up-to-date information, visit [OpenRouter Pricing](https://openrouter.ai/pricing).
+
+## Together AI
+
+### Getting a Together AI API Key
+1. Visit [Together AI](https://www.together.ai/)
+2. Create an account or sign in
+3. Navigate to the API Keys section
+4. Generate a new API key
+5. Copy the API key
+
+### Free Tier
+Together AI offers a free tier that includes:
+- Up to 5 million tokens per month for free
+- Access to open-source models like Llama 2, Mistral, and more
+- No credit card required for the free tier
+
+For the most up-to-date information, visit [Together AI Pricing](https://www.together.ai/pricing).
+
+## Grok
+
+### Getting a Grok API Key
+1. Subscribe to X Premium (formerly Twitter Blue)
+2. Access Grok through the X platform
+3. For API access, follow the instructions provided to X Premium subscribers
+
+### Free Tier
+- Grok is available for free to X Premium subscribers
+- Includes access to Grok-1 and Grok-1 Mini models
+- No additional cost beyond the X Premium subscription
+
+For the most up-to-date information, visit [X Premium](https://premium.x.com/).
 
 ## Adding API Keys to the Platform
 

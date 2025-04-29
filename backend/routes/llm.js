@@ -24,11 +24,28 @@ router.get('/providers', (req, res) => {
   }
 });
 
+// Get only providers that offer free models
+router.get('/free-providers', (req, res) => {
+  try {
+    const freeProviders = LLMService.getFreeProviders();
+    res.json({
+      success: true,
+      providers: freeProviders
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get free providers',
+      error: error.message
+    });
+  }
+});
+
 // Send a message to an LLM
 router.post('/chat', authenticate, async (req, res) => {
   try {
     const { provider, model, messages, conversationId } = req.body;
-    
+
     // Get user for API keys
     const user = await User.findByPk(req.user.id);
     if (!user) {
@@ -37,7 +54,7 @@ router.post('/chat', authenticate, async (req, res) => {
         message: 'User not found'
       });
     }
-    
+
     // Check if API key exists for the provider
     if (!user.apiKeys || !user.apiKeys[provider]) {
       return res.status(400).json({
@@ -45,14 +62,14 @@ router.post('/chat', authenticate, async (req, res) => {
         message: `API key for ${provider} is not set`
       });
     }
-    
+
     // Get or create conversation
     let conversation;
     if (conversationId) {
       conversation = await Conversation.findOne({
         where: { id: conversationId, UserId: user.id }
       });
-      
+
       if (!conversation) {
         return res.status(404).json({
           success: false,
@@ -68,19 +85,19 @@ router.post('/chat', authenticate, async (req, res) => {
         UserId: user.id
       });
     }
-    
+
     // Get LLM service for the provider
     const llmService = LLMService.getService(provider);
-    
+
     // Send message to LLM
     const apiKey = user.apiKeys[provider];
     const response = await llmService.chat(apiKey, model, messages);
-    
+
     // Update conversation with new messages
     const updatedMessages = [...conversation.messages, ...messages, response.message];
     conversation.messages = updatedMessages;
     await conversation.save();
-    
+
     // Record usage
     await Usage.create({
       provider,
@@ -92,7 +109,7 @@ router.post('/chat', authenticate, async (req, res) => {
       success: true,
       UserId: user.id
     });
-    
+
     res.json({
       success: true,
       message: response.message,
@@ -115,7 +132,7 @@ router.post('/chat', authenticate, async (req, res) => {
         UserId: req.user.id
       });
     }
-    
+
     res.status(500).json({
       success: false,
       message: 'Failed to get LLM response',
@@ -131,7 +148,7 @@ router.get('/conversations', authenticate, async (req, res) => {
       where: { UserId: req.user.id },
       order: [['updatedAt', 'DESC']]
     });
-    
+
     res.json({
       success: true,
       conversations
@@ -151,14 +168,14 @@ router.get('/conversations/:id', authenticate, async (req, res) => {
     const conversation = await Conversation.findOne({
       where: { id: req.params.id, UserId: req.user.id }
     });
-    
+
     if (!conversation) {
       return res.status(404).json({
         success: false,
         message: 'Conversation not found'
       });
     }
-    
+
     res.json({
       success: true,
       conversation
@@ -178,16 +195,16 @@ router.delete('/conversations/:id', authenticate, async (req, res) => {
     const conversation = await Conversation.findOne({
       where: { id: req.params.id, UserId: req.user.id }
     });
-    
+
     if (!conversation) {
       return res.status(404).json({
         success: false,
         message: 'Conversation not found'
       });
     }
-    
+
     await conversation.destroy();
-    
+
     res.json({
       success: true,
       message: 'Conversation deleted successfully'
