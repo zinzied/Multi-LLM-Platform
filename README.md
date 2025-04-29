@@ -37,7 +37,7 @@
 
 ## 📦 Installation
 
-1. Clone the repository:
+1. Clone the repository or download the source code:
    ```bash
    git clone https://github.com/zinzied/multi-llm-platform.git
    cd multi-llm-platform
@@ -48,18 +48,29 @@
    npm install
    ```
 
-3. Install frontend dependencies:
+3. Install frontend dependencies (in PowerShell use semicolons instead of &&):
    ```bash
-   cd frontend
-   npm install
-   cd ..
+   # For bash/cmd:
+   cd frontend && npm install && cd ..
+
+   # For PowerShell:
+   cd frontend; npm install; cd ..
    ```
 
-4. Create a `.env` file in the root directory:
+4. Create a `.env` file in the root directory (if it doesn't exist):
    ```
    NODE_ENV=development
-   PORT=5000
+   PORT=5001
    JWT_SECRET=your_jwt_secret_key_change_this_in_production
+   ```
+
+5. Create the data directory for the SQLite database:
+   ```bash
+   # For bash/Linux/macOS:
+   mkdir -p backend/data
+
+   # For Windows:
+   mkdir backend\data
    ```
 
 ## 🚀 Running the Application
@@ -73,21 +84,31 @@
 
 2. In a separate terminal, start the frontend:
    ```bash
-   npm run client
+   # For bash/cmd:
+   cd frontend && npm run dev
+
+   # For PowerShell:
+   cd frontend; npm run dev
    ```
 
-3. Or run both concurrently:
-   ```bash
-   npm run dev
-   ```
+3. Access the application at `http://localhost:5173` 🎉
 
-4. Access the application at `http://localhost:5173` 🎉
+4. For testing purposes, you can create a test user by visiting:
+   `http://localhost:5001/api/create-user`
+   This will create a user with:
+   - Email: test@example.com
+   - Password: password123
+   - Role: admin
 
 ### Production Mode
 
 1. Build the frontend:
    ```bash
-   npm run build
+   # For bash/cmd:
+   cd frontend && npm run build && cd ..
+
+   # For PowerShell:
+   cd frontend; npm run build; cd ..
    ```
 
 2. Start the production server:
@@ -95,7 +116,69 @@
    npm start
    ```
 
-3. Access the application at `http://localhost:5000` 🚀
+3. Access the application at `http://localhost:5001` 🚀
+
+### Troubleshooting
+
+If you encounter any issues:
+
+1. Make sure all dependencies are installed correctly:
+   ```bash
+   # For the backend:
+   npm install
+
+   # For the frontend (PowerShell):
+   cd frontend; npm install; cd ..
+   ```
+
+2. Check that the `.env` file exists in the root directory
+
+3. Ensure the data directory exists:
+   ```bash
+   mkdir backend\data
+   ```
+
+4. If you get errors about missing modules, try:
+   ```bash
+   npm install --legacy-peer-deps
+   cd frontend; npm install --legacy-peer-deps; cd ..
+   ```
+
+5. If you see errors about Vite not being found, make sure you've installed the frontend dependencies:
+   ```bash
+   cd frontend; npm install; cd ..
+   ```
+
+6. If port 5001 is already in use, change the PORT value in your .env file to another port (e.g., 5002, 5003, etc.)
+
+7. Make sure you have the latest version of Node.js installed (v16 or higher)
+
+### Quick Start Guide
+
+For a quick start:
+
+1. Create the .env file with the content provided above
+2. Run these commands:
+   ```bash
+   # Install dependencies
+   npm install
+   cd frontend; npm install; cd ..
+
+   # Create data directory
+   mkdir backend\data
+
+   # Start the backend server
+   node backend/server.js
+
+   # In a new terminal, start the frontend
+   cd frontend; npm run dev
+   ```
+
+3. Visit `http://localhost:5001/api/create-user` to create a test user
+4. Access the application at `http://localhost:5173`
+5. Log in with:
+   - Email: test@example.com
+   - Password: password123
 
 ## 📝 Usage
 
