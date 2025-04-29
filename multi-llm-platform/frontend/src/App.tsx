@@ -39,12 +39,20 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }>
               <Route index element={<Navigate to="/chat" replace />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chat/:conversationId" element={<Chat />} />
               <Route path="settings/api-keys" element={<ApiKeys />} />
-              <Route path="admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+              <Route path="admin" element={
+                <AdminRoute>
+                  <AdminPanel />
+                </AdminRoute>
+              } />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
