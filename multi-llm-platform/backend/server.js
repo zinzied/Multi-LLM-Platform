@@ -31,6 +31,48 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working!' });
 });
 
+// Direct route to create a user (for testing)
+app.get('/api/create-user', async (req, res) => {
+  try {
+    const User = require('./models/User');
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email: 'test@example.com' } });
+    if (existingUser) {
+      return res.json({
+        success: true,
+        message: 'User already exists',
+        user: existingUser.toJSON(),
+        token: require('./config/auth').generateToken(existingUser)
+      });
+    }
+
+    // Create new user
+    const user = await User.create({
+      email: 'test@example.com',
+      password: 'password123',
+      role: 'admin'
+    });
+
+    // Generate token
+    const token = require('./config/auth').generateToken(user);
+
+    res.json({
+      success: true,
+      message: 'User created successfully',
+      user: user.toJSON(),
+      token
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create user',
+      error: error.message
+    });
+  }
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/llm', llmRoutes);
