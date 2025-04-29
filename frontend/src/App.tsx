@@ -9,7 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard';
-import Chat from './components/Chat/Chat';
+import BasicChat from './components/Chat/BasicChat'; // Using basic chat component
 import ApiKeys from './components/Settings/ApiKeys';
 import AdminPanel from './components/Admin/AdminPanel';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -44,8 +44,8 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<Navigate to="/chat" replace />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="chat/:conversationId" element={<Chat />} />
+              <Route path="chat" element={<BasicChat />} />
+              <Route path="chat/:conversationId" element={<BasicChat />} />
               <Route path="settings/api-keys" element={<ApiKeys />} />
               <Route path="admin" element={
                 <AdminRoute>

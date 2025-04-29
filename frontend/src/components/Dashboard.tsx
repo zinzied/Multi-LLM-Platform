@@ -32,7 +32,7 @@ const drawerWidth = 240;
 const Dashboard: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton 
+          <ListItemButton
             selected={location.pathname.startsWith('/chat')}
             onClick={() => handleNavigation('/chat')}
           >
@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton 
+          <ListItemButton
             selected={location.pathname === '/settings/api-keys'}
             onClick={() => handleNavigation('/settings/api-keys')}
           >
@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
         </ListItem>
         {user?.role === 'admin' && (
           <ListItem disablePadding>
-            <ListItemButton 
+            <ListItemButton
               selected={location.pathname === '/admin'}
               onClick={() => handleNavigation('/admin')}
             >
@@ -188,9 +188,21 @@ const Dashboard: React.FC = () => {
       </Box>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          height: 'calc(100vh - 64px)',
+          overflow: 'auto'
+        }}
       >
         <Toolbar />
+        {/* Debug message */}
+        <Box sx={{ mb: 2, p: 1, bgcolor: '#e3f2fd', borderRadius: 1 }}>
+          <Typography variant="body2">
+            Dashboard is rendering the Outlet component here
+          </Typography>
+        </Box>
         <Outlet />
       </Box>
     </Box>

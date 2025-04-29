@@ -35,7 +35,15 @@
 - Node.js (v16 or higher)
 - npm or yarn
 
-## 📦 Installation
+## � Documentation
+
+Comprehensive documentation is available in the [docs](docs/) directory:
+
+- [API Keys Guide](docs/API_KEYS_GUIDE.md) - How to obtain and manage API keys
+- [Troubleshooting Guide](docs/TROUBLESHOOTING.md) - Solutions to common issues
+- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Information for extending the platform
+
+## �📦 Installation
 
 1. Clone the repository or download the source code:
    ```bash
@@ -153,6 +161,8 @@ If you encounter any issues:
 
 7. Make sure you have the latest version of Node.js installed (v16 or higher)
 
+For more detailed troubleshooting steps, see our [Troubleshooting Guide](docs/TROUBLESHOOTING.md).
+
 ### Quick Start Guide
 
 For a quick start:
@@ -182,10 +192,61 @@ For a quick start:
 
 ## 📝 Usage
 
-1. 👤 Register a new account or log in
-2. 🔑 Add your API keys for the LLM providers you want to use
-3. 💬 Start a new chat and select a provider and model
+1. 👤 Register a new account or log in with the test account:
+   - Email: test@example.com
+   - Password: password123
+
+2. 🔑 Add your API keys for the LLM providers you want to use:
+   - Navigate to Settings > API Keys in the sidebar
+   - Enter your API keys for each provider you want to use
+   - Click Save to store your keys securely
+
+3. 💬 Start a new chat:
+   - Click on "New Chat" in the sidebar
+   - Select a provider from the dropdown menu (OpenAI, Anthropic, Google, etc.)
+   - Select a specific model from the chosen provider
+   - Type your message and click Send
+
 4. 📨 Send messages and receive responses from the selected LLM
+   - Your conversation history will be saved automatically
+   - You can view past conversations in the sidebar
+
+## 🔑 Getting API Keys for LLM Providers
+
+To use the Multi-LLM Platform, you'll need API keys from the LLM providers you want to use. Here's a quick overview:
+
+### OpenAI API Key
+1. Go to [OpenAI Platform](https://platform.openai.com/)
+2. Sign up or log in to your account
+3. Navigate to API Keys section
+4. Click "Create new secret key"
+5. Copy the generated API key
+
+### Anthropic API Key
+1. Visit [Anthropic Console](https://console.anthropic.com/)
+2. Create an account or sign in
+3. Go to the API Keys section
+4. Generate a new API key
+
+### Google AI (Gemini) API Key
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy the API key
+
+### Mistral AI API Key
+1. Visit [Mistral AI Platform](https://console.mistral.ai/)
+2. Create an account or sign in
+3. Navigate to the API Keys section
+4. Generate a new API key
+
+### Cohere API Key
+1. Visit [Cohere Dashboard](https://dashboard.cohere.com/)
+2. Sign up or log in
+3. Navigate to API Keys
+4. Create a new API key
+
+For detailed instructions, pricing information, and security best practices, see our [API Keys Guide](docs/API_KEYS_GUIDE.md).
 
 ## 👑 Admin Features
 
@@ -194,19 +255,48 @@ Admin users have access to:
 - 📊 Usage statistics and cost tracking
 - ⚠️ Error logs and diagnostics
 
-## 🧩 Adding a New LLM Provider
+## 🧩 Extending the Platform
+
+The Multi-LLM Platform is designed to be easily extended and customized.
+
+### Adding a New LLM Provider
 
 To add a new LLM provider:
 
-1. Create a new adapter file in `backend/services/llm/`
+1. Create a new adapter file in `backend/services/llm/` (e.g., `newprovider.js`)
 2. Implement the required interface (name, description, models, chat function)
-3. Add the new provider to the index.js file in the same directory
+3. Add the new provider to the `index.js` file in the same directory
+4. Restart the server for the changes to take effect
+
+For detailed instructions and code examples, see our [Developer Guide](docs/DEVELOPER_GUIDE.md).
+
+### Customizing the UI
+
+The UI is built with Material-UI and can be customized by:
+
+1. Modifying the theme in `frontend/src/App.tsx`
+2. Customizing individual components in their respective files
+3. Using Material-UI's styling system to adjust component styles
+
+See the [Developer Guide](docs/DEVELOPER_GUIDE.md) for more information on customizing the platform.
 
 ## 📸 Screenshots
 
 <div align="center">
-  <p><i>Coming soon!</i> 📷</p>
+  <h3>Chat Interface</h3>
+  <p>The main chat interface with LLM provider and model selection</p>
+  <img src="docs/images/chat-interface.png" alt="Chat Interface" width="800" />
+
+  <h3>API Keys Management</h3>
+  <p>Securely manage your API keys for different LLM providers</p>
+  <img src="docs/images/api-keys.png" alt="API Keys Management" width="800" />
+
+  <h3>Admin Dashboard</h3>
+  <p>Monitor usage, costs, and manage users (admin only)</p>
+  <img src="docs/images/admin-dashboard.png" alt="Admin Dashboard" width="800" />
 </div>
+
+> Note: The actual interface may vary slightly from the screenshots as the application continues to evolve.
 
 ## 🤝 Contributing
 

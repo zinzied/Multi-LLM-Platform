@@ -81,12 +81,12 @@ const Chat: React.FC = () => {
       try {
         const response = await api.get('/llm/providers');
         setProviders(response.data.providers);
-        
+
         // Set default provider and model if none selected
         if (!selectedProvider && Object.keys(response.data.providers).length > 0) {
           const firstProvider = Object.keys(response.data.providers)[0];
           setSelectedProvider(firstProvider);
-          
+
           const models = response.data.providers[firstProvider].models;
           if (models.length > 0) {
             setSelectedModel(models[0].id);
@@ -127,7 +127,7 @@ const Chat: React.FC = () => {
       try {
         const response = await api.get(`/llm/conversations/${conversationId}`);
         const conversation = response.data.conversation;
-        
+
         setMessages(conversation.messages || []);
         setSelectedProvider(conversation.provider);
         setSelectedModel(conversation.model);
@@ -177,11 +177,11 @@ const Chat: React.FC = () => {
 
       // Update messages with assistant response
       setMessages(prev => [...prev, response.data.message]);
-      
+
       // If this is a new conversation, navigate to the new conversation URL
       if (!conversationId && response.data.conversation?.id) {
         navigate(`/chat/${response.data.conversation.id}`);
-        
+
         // Update conversations list
         setConversations(prev => [response.data.conversation, ...prev]);
       }
@@ -209,7 +209,7 @@ const Chat: React.FC = () => {
   const handleProviderChange = (event: SelectChangeEvent) => {
     const provider = event.target.value;
     setSelectedProvider(provider);
-    
+
     // Reset model when provider changes
     if (providers[provider]?.models.length > 0) {
       setSelectedModel(providers[provider].models[0].id);
@@ -234,13 +234,13 @@ const Chat: React.FC = () => {
 
   const handleDeleteConversation = async () => {
     if (!selectedConversation) return;
-    
+
     try {
       await api.delete(`/llm/conversations/${selectedConversation}`);
-      
+
       // Update conversations list
       setConversations(prev => prev.filter(conv => conv.id !== selectedConversation));
-      
+
       // If the deleted conversation is the current one, navigate to new chat
       if (conversationId === selectedConversation) {
         navigate('/chat');
@@ -267,9 +267,9 @@ const Chat: React.FC = () => {
           >
             New Chat
           </Button>
-          
+
           <Divider sx={{ mb: 2 }} />
-          
+
           <List>
             {conversations.map(conversation => (
               <ListItem
@@ -302,7 +302,7 @@ const Chat: React.FC = () => {
               </Typography>
             )}
           </List>
-          
+
           <Menu
             anchorEl={menuAnchorEl}
             open={Boolean(menuAnchorEl)}
@@ -317,7 +317,7 @@ const Chat: React.FC = () => {
           </Menu>
         </Paper>
       </Grid>
-      
+
       {/* Chat area */}
       <Grid item xs={12} md={9} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Paper sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between' }}>
@@ -338,7 +338,7 @@ const Chat: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
-            
+
             <FormControl sx={{ minWidth: 200 }} size="small">
               <InputLabel id="model-label">Model</InputLabel>
               <Select
@@ -356,7 +356,7 @@ const Chat: React.FC = () => {
                   ))}
               </Select>
             </FormControl>
-            
+
             <Box sx={{ display: { xs: 'block', md: 'none' }, ml: 'auto' }}>
               <Button
                 variant="outlined"
@@ -369,15 +369,16 @@ const Chat: React.FC = () => {
             </Box>
           </Box>
         </Paper>
-        
+
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
             {error}
           </Alert>
         )}
-        
+
         {/* Messages area */}
         <Paper
+          className="message-area"
           sx={{
             p: 2,
             mb: 2,
@@ -398,7 +399,7 @@ const Chat: React.FC = () => {
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1, width: '100%', display: 'flex', flexDirection: 'column' }}>
               {messages.map((msg, index) => (
                 <MessageBubble key={index} message={msg} />
               ))}
@@ -406,7 +407,7 @@ const Chat: React.FC = () => {
             </Box>
           )}
         </Paper>
-        
+
         {/* Input area */}
         <Paper sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
