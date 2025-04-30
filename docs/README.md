@@ -5,6 +5,7 @@ Welcome to the Multi-LLM Platform documentation. This directory contains detaile
 ## Available Documentation
 
 - [API Keys Guide](API_KEYS_GUIDE.md) - Detailed instructions on obtaining and managing API keys for different LLM providers
+- [Database Guide](DATABASE_GUIDE.md) - Comprehensive information about the database system and data persistence
 - [Troubleshooting Guide](TROUBLESHOOTING.md) - Solutions to common issues you might encounter
 - [Developer Guide](DEVELOPER_GUIDE.md) - Information for developers who want to extend or customize the platform
 

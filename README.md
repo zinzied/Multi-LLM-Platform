@@ -41,11 +41,34 @@
 - Node.js (v16 or higher)
 - npm or yarn
 
-## � Documentation
+## 💾 Database Information
+
+The Multi-LLM Platform uses SQLite for data storage, which offers several advantages:
+
+- **No separate database server required** - SQLite runs embedded in the application
+- **Simple setup** - The database is automatically created when you first run the server
+- **Portable** - All data is stored in a single file (`backend/data/database.sqlite`)
+
+### Important Database Notes
+
+- **Always use `node backend/server.js`** to run the server for proper database persistence
+- The database file is created automatically in the `backend/data` directory
+- All your conversations, API keys, and user data are stored in this file
+- If you stop the Node server abruptly, some recent changes might not be saved
+- For production use, consider setting up regular backups of the database file
+
+### Database Tables
+
+- **Users**: Stores user accounts, passwords (hashed), and encrypted API keys
+- **Conversations**: Stores chat conversations with message history
+- **Usage**: Tracks API usage, costs, and errors for monitoring
+
+## 📚 Documentation
 
 Comprehensive documentation is available in the [docs](docs/) directory:
 
 - [API Keys Guide](docs/API_KEYS_GUIDE.md) - How to obtain and manage API keys
+- [Database Guide](docs/DATABASE_GUIDE.md) - Detailed information about the database system
 - [Troubleshooting Guide](docs/TROUBLESHOOTING.md) - Solutions to common issues
 - [Developer Guide](docs/DEVELOPER_GUIDE.md) - Information for extending the platform
 
@@ -93,8 +116,14 @@ Comprehensive documentation is available in the [docs](docs/) directory:
 
 1. Start the backend server:
    ```bash
+   # Using npm script
    npm run server
+
+   # OR using node directly (recommended for database persistence)
+   node backend/server.js
    ```
+
+   > **IMPORTANT**: Always use `node backend/server.js` instead of `npm run server` if you want to ensure your database changes are properly saved and synced. The Node server maintains the SQLite database connection and ensures all data is properly persisted.
 
 2. In a separate terminal, start the frontend:
    ```bash
@@ -114,6 +143,12 @@ Comprehensive documentation is available in the [docs](docs/) directory:
    - Password: password123
    - Role: admin
 
+5. **Database Persistence**:
+   - The SQLite database is stored in `backend/data/database.sqlite`
+   - All your conversations, API keys, and user data are saved in this file
+   - Make sure to keep the Node server running to ensure all changes are saved
+   - Consider backing up this file regularly if you store important conversations
+
 ### Production Mode
 
 1. Build the frontend:
@@ -127,10 +162,19 @@ Comprehensive documentation is available in the [docs](docs/) directory:
 
 2. Start the production server:
    ```bash
+   # Using npm script
    npm start
+
+   # OR using node directly (recommended for database persistence)
+   NODE_ENV=production node backend/server.js
    ```
 
 3. Access the application at `http://localhost:5001` 🚀
+
+> **Production Database**: In production mode, the same SQLite database in `backend/data/database.sqlite` is used. For a production environment, you might want to:
+> - Set up regular database backups
+> - Consider migrating to a more robust database like PostgreSQL or MySQL
+> - Use a process manager like PM2 to keep the Node server running: `pm2 start backend/server.js`
 
 ### Troubleshooting
 
@@ -183,7 +227,7 @@ For a quick start:
    # Create data directory
    mkdir backend\data
 
-   # Start the backend server
+   # Start the backend server (IMPORTANT: use node directly for database persistence)
    node backend/server.js
 
    # In a new terminal, start the frontend
@@ -195,6 +239,8 @@ For a quick start:
 5. Log in with:
    - Email: test@example.com
    - Password: password123
+
+> **Database Note**: Always keep the Node server running with `node backend/server.js` to ensure your database changes (conversations, API keys, user data) are properly saved. The SQLite database is stored in `backend/data/database.sqlite`.
 
 ## 📝 Usage
 
