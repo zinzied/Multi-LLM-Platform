@@ -74,7 +74,7 @@ const ApiKeys: React.FC = () => {
     setIsSaving(true);
     setError('');
     setSuccess('');
-    
+
     try {
       await updateApiKeys(apiKeys);
       setSuccess('API keys saved successfully');
@@ -108,6 +108,33 @@ const ApiKeys: React.FC = () => {
         Enter your API keys for each provider you want to use. Your keys are encrypted and stored securely.
       </Typography>
 
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+          Free Models Available!
+        </Typography>
+        <Typography variant="body2">
+          You can now use free models from OpenRouter, Together AI, and Grok (with X Premium).
+          To use these services, you'll still need to create an account and get an API key from their websites.
+        </Typography>
+        <Box component="ul" sx={{ mt: 1, mb: 0 }}>
+          <li>
+            <Typography variant="body2">
+              <strong>OpenRouter</strong>: Sign up at <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">openrouter.ai</a> to get free credits
+            </Typography>
+          </li>
+          <li>
+            <Typography variant="body2">
+              <strong>Together AI</strong>: Sign up at <a href="https://www.together.ai" target="_blank" rel="noopener noreferrer">together.ai</a> for 5M free tokens/month
+            </Typography>
+          </li>
+          <li>
+            <Typography variant="body2">
+              <strong>Grok</strong>: Available with X Premium subscription
+            </Typography>
+          </li>
+        </Box>
+      </Alert>
+
       <Paper sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>
           {Object.entries(providers).map(([providerId, provider]) => (
@@ -120,6 +147,16 @@ const ApiKeys: React.FC = () => {
                   <Typography variant="body2" paragraph>
                     {provider.description}
                   </Typography>
+
+                  {/* Show free model badge if provider has free models */}
+                  {provider.hasFreeModels && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                      <Typography variant="body2">
+                        <strong>Free Tier Available!</strong> This provider offers free models that you can use with limited quota.
+                      </Typography>
+                    </Alert>
+                  )}
+
                   <Typography variant="subtitle2" gutterBottom>
                     Available Models:
                   </Typography>
@@ -127,11 +164,50 @@ const ApiKeys: React.FC = () => {
                     {provider.models.map(model => (
                       <li key={model.id}>
                         <Typography variant="body2">
-                          <strong>{model.name}</strong> - {model.description}
+                          <strong>{model.name}</strong> {model.description ? `- ${model.description}` : ''}
+                          {model.isFree && (
+                            <span style={{
+                              backgroundColor: '#4caf50',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                              marginLeft: '8px'
+                            }}>
+                              FREE
+                            </span>
+                          )}
                         </Typography>
                       </li>
                     ))}
                   </ul>
+
+                  {/* Provider-specific instructions */}
+                  {providerId === 'openrouter' && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Typography variant="body2">
+                        <strong>OpenRouter API Key:</strong> Sign up at <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">openrouter.ai</a> and
+                        go to the API Keys section to create a key. You'll get free credits to start with.
+                      </Typography>
+                    </Alert>
+                  )}
+
+                  {providerId === 'together' && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Typography variant="body2">
+                        <strong>Together AI API Key:</strong> Create an account at <a href="https://www.together.ai" target="_blank" rel="noopener noreferrer">together.ai</a> and
+                        generate an API key from your dashboard. Free tier includes 5M tokens per month.
+                      </Typography>
+                    </Alert>
+                  )}
+
+                  {providerId === 'grok' && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Typography variant="body2">
+                        <strong>Grok API Key:</strong> Subscribe to X Premium and follow their instructions to get API access to Grok.
+                      </Typography>
+                    </Alert>
+                  )}
                   <TextField
                     fullWidth
                     label={`${provider.name} API Key`}

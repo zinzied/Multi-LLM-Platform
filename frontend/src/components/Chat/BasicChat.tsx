@@ -17,8 +17,12 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
-  Chip
+  Chip,
+  Alert,
+  Snackbar
 } from '@mui/material';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 // Define available LLM providers and models
 const providers = {
@@ -119,6 +123,7 @@ interface Message {
 }
 
 const BasicChat: React.FC = () => {
+  const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Hello! How can I help you today? Please select an LLM provider and model to start chatting. We now offer free models from OpenRouter, Together AI, and Grok!' }
@@ -128,6 +133,8 @@ const BasicChat: React.FC = () => {
   const [isSending, setIsSending] = useState(false);
   const [showFreeModelsOnly, setShowFreeModelsOnly] = useState(true);
   const [filteredProviders, setFilteredProviders] = useState<typeof providers>(providers);
+  const [error, setError] = useState<string | null>(null);
+  const [showError, setShowError] = useState(false);
 
   // Filter providers based on free models toggle
   useEffect(() => {
@@ -199,26 +206,56 @@ const BasicChat: React.FC = () => {
     setShowFreeModelsOnly(!showFreeModelsOnly);
   };
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      // Add user message
-      const userMessage: Message = { role: 'user', content: message };
-      setMessages(prev => [...prev, userMessage]);
-      setMessage('');
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
 
-      // Simulate sending to API
-      setIsSending(true);
+    // Check if provider and model are selected
+    if (!selectedProvider || !selectedModel) {
+      setError('Please select a provider and model');
+      setShowError(true);
+      return;
+    }
 
-      // Simulate delay
-      setTimeout(() => {
-        // Add assistant response
-        const assistantMessage: Message = {
-          role: 'assistant',
-          content: demoResponses[selectedProvider as keyof typeof demoResponses]
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-        setIsSending(false);
-      }, 1000);
+    // Check if API key is set for the selected provider
+    if (!user?.apiKeys?.[selectedProvider]) {
+      setError(`API key for ${providers[selectedProvider as keyof typeof providers]?.name || selectedProvider} is not set. Please add it in the API Keys section.`);
+      setShowError(true);
+      return;
+    }
+
+    // Add user message
+    const userMessage: Message = { role: 'user', content: message };
+    setMessages(prev => [...prev, userMessage]);
+    setMessage('');
+    setIsSending(true);
+    setError(null);
+
+    try {
+      // Send message to the real API
+      const response = await api.post('/llm/chat', {
+        provider: selectedProvider,
+        model: selectedModel,
+        messages: [...messages, userMessage]
+      });
+
+      // Add assistant response from the API
+      setMessages(prev => [...prev, response.data.message]);
+    } catch (err: any) {
+      console.error('Failed to send message:', err);
+
+      // Show error message
+      const errorMessage = err.response?.data?.message || 'Failed to send message';
+      setError(errorMessage);
+      setShowError(true);
+
+      // Fallback to demo response if API call fails
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: `Error: ${errorMessage}. As a fallback, here's a simulated response: ${demoResponses[selectedProvider as keyof typeof demoResponses]}`
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -229,8 +266,25 @@ const BasicChat: React.FC = () => {
     }
   };
 
+  // Handle error snackbar close
+  const handleErrorClose = () => {
+    setShowError(false);
+  };
+
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Error Snackbar */}
+      <Snackbar
+        open={showError}
+        autoHideDuration={6000}
+        onClose={handleErrorClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleErrorClose} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+
       <Paper sx={{ p: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* Free models toggle */}
@@ -322,6 +376,24 @@ const BasicChat: React.FC = () => {
                 />
               )}
             </Typography>
+          </Box>
+
+          {/* API Key Status */}
+          <Box sx={{ mt: 1 }}>
+            {!user?.apiKeys?.[selectedProvider] ? (
+              <Alert severity="warning" sx={{ mt: 1 }}>
+                <Typography variant="body2">
+                  API key for {providers[selectedProvider as keyof typeof providers]?.name} is not set.
+                  Please add it in the Settings &gt; API Keys section to use this provider.
+                </Typography>
+              </Alert>
+            ) : (
+              <Alert severity="success" sx={{ mt: 1 }}>
+                <Typography variant="body2">
+                  API key for {providers[selectedProvider as keyof typeof providers]?.name} is set and ready to use.
+                </Typography>
+              </Alert>
+            )}
           </Box>
         </Box>
       </Paper>
