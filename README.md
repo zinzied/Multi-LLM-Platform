@@ -112,7 +112,27 @@ Comprehensive documentation is available in the [docs](docs/) directory:
 
 ## 🚀 Running the Application
 
-### Development Mode
+### Using the All-in-One Launcher (Recommended)
+
+The easiest way to run the Multi-LLM Platform is using the all-in-one launcher:
+
+1. Double-click `all-in-one-launcher.bat` to open the interactive menu
+2. Select an option by entering the corresponding number:
+   - Option 1: Start Platform (Backend + Frontend)
+   - Option 6: First-Time Setup (Install + Start)
+   - Option 8: Create Test User
+
+The launcher provides many other options including:
+- Automatic startup
+- Database backup and restore
+- Production build and deployment
+- Desktop shortcut creation
+
+For detailed instructions, see [ALL_IN_ONE_LAUNCHER.md](ALL_IN_ONE_LAUNCHER.md).
+
+### Manual Development Mode
+
+If you prefer to run the components manually:
 
 1. Start the backend server:
    ```bash
@@ -215,7 +235,20 @@ For more detailed troubleshooting steps, see our [Troubleshooting Guide](docs/TR
 
 ### Quick Start Guide
 
-For a quick start:
+#### Using the All-in-One Launcher (Recommended)
+
+The fastest way to get started:
+
+1. Double-click `all-in-one-launcher.bat`
+2. Select option 6 (First-Time Setup)
+3. Follow the on-screen instructions
+4. Log in with the test user:
+   - Email: test@example.com
+   - Password: password123
+
+#### Manual Quick Start
+
+If you prefer to set up manually:
 
 1. Create the .env file with the content provided above
 2. Run these commands:

@@ -4,6 +4,7 @@ Welcome to the Multi-LLM Platform documentation. This directory contains detaile
 
 ## Available Documentation
 
+- [All-in-One Launcher Guide](../ALL_IN_ONE_LAUNCHER.md) - Instructions for using the all-in-one launcher batch file
 - [API Keys Guide](API_KEYS_GUIDE.md) - Detailed instructions on obtaining and managing API keys for different LLM providers
 - [Database Guide](DATABASE_GUIDE.md) - Comprehensive information about the database system and data persistence
 - [Troubleshooting Guide](TROUBLESHOOTING.md) - Solutions to common issues you might encounter
