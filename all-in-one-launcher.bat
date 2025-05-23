@@ -3,6 +3,18 @@ setlocal enabledelayedexpansion
 color 0B
 title Multi-LLM Platform - All-in-One Launcher
 
+REM Function to check if a port is in use
+:check_port
+set "port=%~1"
+set "port_in_use="
+netstat -ano | findstr ":%port% " | findstr "LISTENING" >nul
+if %ERRORLEVEL% equ 0 (
+    set "port_in_use=true"
+) else (
+    set "port_in_use=false"
+)
+exit /b
+
 REM Check for command-line arguments
 if "%1"=="1" goto start_platform
 if "%1"=="2" goto start_backend
@@ -105,6 +117,52 @@ if not exist ".env" (
     echo JWT_SECRET=your_jwt_secret_key_change_this_in_production>> .env
 )
 
+REM Check if ports are available
+echo Checking if required ports are available...
+call :check_port 5001
+if "%port_in_use%"=="true" (
+    echo.
+    echo WARNING: Port 5001 is already in use. The backend server may not start correctly.
+    echo This could be because:
+    echo  - Another instance of the platform is already running
+    echo  - Another application is using port 5001
+    echo.
+    echo You can:
+    echo  1. Close the other application using port 5001
+    echo  2. Change the PORT value in the .env file
+    echo.
+    set /p continue_anyway=Do you want to try starting the server anyway? (y/n):
+    if /i not "!continue_anyway!"=="y" (
+        echo.
+        echo Startup cancelled.
+        echo.
+        pause
+        goto menu
+    )
+)
+
+call :check_port 5173
+if "%port_in_use%"=="true" (
+    echo.
+    echo WARNING: Port 5173 is already in use. The frontend server may not start correctly.
+    echo This could be because:
+    echo  - Another instance of the platform is already running
+    echo  - Another application is using port 5173
+    echo.
+    echo You can:
+    echo  1. Close the other application using port 5173
+    echo  2. The frontend will automatically try to use another port
+    echo.
+    set /p continue_anyway=Do you want to try starting the server anyway? (y/n):
+    if /i not "!continue_anyway!"=="y" (
+        echo.
+        echo Startup cancelled.
+        echo.
+        pause
+        goto menu
+    )
+)
+
 REM Start the backend server in a new window
 echo Starting backend server...
 start "Multi-LLM Backend Server" cmd /c "color 0A && echo Backend Server is starting... && echo. && node backend/server.js"
@@ -132,8 +190,56 @@ echo.
 echo Press any key to open the platform in your default browser...
 pause > nul
 
-REM Open the platform in the default browser
+REM Verify that servers are running
+echo Verifying that servers are running...
+curl -s http://localhost:5001/api/test > nul
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo WARNING: Backend server does not appear to be running correctly.
+    echo You may need to check the backend server window for errors.
+    echo.
+)
+
+REM Try to connect to the frontend
+curl -s http://localhost:5173 > nul
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo WARNING: Frontend server does not appear to be running correctly.
+    echo You may need to check the frontend server window for errors.
+    echo The frontend may be using a different port if 5173 was already in use.
+    echo.
+)
+
+REM Try multiple methods to open the browser
+echo Attempting to open the platform in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5173
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5173"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5173
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5173
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 echo.
 echo You can close this window now. The servers will continue running in their own windows.
@@ -280,8 +386,56 @@ echo Opening the platform in your default browser...
 REM Wait a moment for the frontend to initialize
 timeout /t 3 /nobreak > nul
 
-REM Open the platform in the default browser
+REM Verify that servers are running
+echo Verifying that servers are running...
+curl -s http://localhost:5001/api/test > nul
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo WARNING: Backend server does not appear to be running correctly.
+    echo You may need to check the backend server window for errors.
+    echo.
+)
+
+REM Try to connect to the frontend
+curl -s http://localhost:5173 > nul
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo WARNING: Frontend server does not appear to be running correctly.
+    echo You may need to check the frontend server window for errors.
+    echo The frontend may be using a different port if 5173 was already in use.
+    echo.
+)
+
+REM Try multiple methods to open the browser
+echo Attempting to open the platform in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5173
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5173"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5173
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5173
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 goto menu
 
@@ -371,8 +525,36 @@ echo Opening the login page in your default browser...
 REM Wait a moment for the frontend to initialize
 timeout /t 3 /nobreak > nul
 
-REM Open the login page in the default browser
+REM Try multiple methods to open the browser
+echo Attempting to open the login page in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5173/login
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5173/login"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5173/login
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5173/login
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 goto menu
 
@@ -502,8 +684,36 @@ echo Opening the login page in your default browser...
 REM Wait a moment for the frontend to initialize
 timeout /t 3 /nobreak > nul
 
-REM Open the login page in the default browser
+REM Try multiple methods to open the browser
+echo Attempting to open the login page in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5173/login
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5173/login"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5173/login
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5173/login
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 echo.
 pause
@@ -628,8 +838,36 @@ echo.
 echo Press any key to open the login page in your browser...
 pause > nul
 
-REM Open the login page in the default browser
+REM Try multiple methods to open the browser
+echo Attempting to open the login page in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5173/login
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5173/login"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5173/login
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5173/login
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 echo.
 pause
@@ -975,8 +1213,36 @@ echo.
 echo Press any key to open the platform in your default browser...
 pause > nul
 
-REM Open the platform in the default browser
+REM Try multiple methods to open the browser
+echo Attempting to open the platform in your browser...
+
+REM Method 1: Using the start command (standard method)
 start http://localhost:5001
+if %ERRORLEVEL% equ 0 (
+    echo Browser opened using Method 1 (start command).
+) else (
+    echo Method 1 failed, trying alternative methods...
+
+    REM Method 2: Using explorer.exe
+    explorer "http://localhost:5001"
+    if %ERRORLEVEL% equ 0 (
+        echo Browser opened using Method 2 (explorer).
+    ) else (
+        REM Method 3: Using rundll32
+        rundll32 url.dll,FileProtocolHandler http://localhost:5001
+        if %ERRORLEVEL% equ 0 (
+            echo Browser opened using Method 3 (rundll32).
+        ) else (
+            echo.
+            echo ===================================================
+            echo WARNING: Could not automatically open the browser.
+            echo Please manually open this URL in your browser:
+            echo http://localhost:5001
+            echo ===================================================
+            echo.
+        )
+    )
+)
 
 echo.
 pause
